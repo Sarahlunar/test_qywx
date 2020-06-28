@@ -1,3 +1,4 @@
 import pytest
 class TestDemo:
-    pass
+    def test_case(self):
+        pass
