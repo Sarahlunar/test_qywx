@@ -20,6 +20,7 @@ class TestDemo:
     def test_set_cookie(self):
         db = shelve.open('../datas/test_cookie/cookies')
         cookies = db['cookie']
+        db.close()
         # 添加cookie前要先访问页面
         self.driver.get("https://work.weixin.qq.com/wework_admin/frame#index")
         # cookie中的expiry如果是小数就会报错, 需要删掉
