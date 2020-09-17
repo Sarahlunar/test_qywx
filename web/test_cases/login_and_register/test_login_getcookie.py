@@ -1,20 +1,27 @@
 import shelve
+from time import sleep
+
 import pytest
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 import json
 
-class TestDemo:
-    def setup_method(self):
+class TestLogin:
+    def setup_method(self, method):
         options = Options()
         options.debugger_address = "127.0.0.1:9222"
-        # self.driver = webdriver.Chrome(options=options)
-        self.driver = webdriver.Chrome()
+        self.driver = webdriver.Chrome(options=options)
+        # self.driver = webdriver.Chrome()
+
+    def teardown_method(self, method):
+        self.driver.quit()
+
     #获取cookie
     def test_get_cookie(self):
         db = shelve.open('../datas/test_cookie/cookies')
         db['cookie'] = self.driver.get_cookies()
+        db.close()
 
     # 设置cookie
     def test_set_cookie(self):
