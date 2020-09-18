@@ -4,7 +4,7 @@ from web.pages.address_book.import_address_book import ImportAddressBook
 from web.pages.base import Base
 from web.pages.address_book.index import AddressBook
 from web.pages.app_management.index import AppManagement
-from web.pages.customer_contact.add_member import AddMember
+from web.pages.address_book.add_member import AddMember
 from web.pages.customer_contact.index import CustomerContact
 from web.pages.management_tools.attendance import Attendance
 from web.pages.management_tools.group_message import GroupMessage
@@ -15,6 +15,8 @@ from web.pages.my_company.index import MyCompany
 
 class Home(Base):
     # 进入顶部各菜单栏
+    _base_url = "https://work.weixin.qq.com/wework_admin/frame"
+
     def goto_address_book(self):
         self.find(By.CSS_SELECTOR, '#menu_contacts').click()
         return AddressBook(self._driver)
