@@ -13,3 +13,7 @@ class TestAddMemeber:
 
     def test_get_member(self):
         assert self.home.goto_address_book().get_member_search("13000000002")
+
+    def test_delete_member(self):
+        msg, code = self.home.goto_address_book().delete_member_search("13900000002")
+        assert code == 1

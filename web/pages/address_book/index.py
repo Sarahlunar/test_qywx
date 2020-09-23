@@ -40,9 +40,39 @@ class AddressBook(Base):
         return False
 
     # 通过页面删除成员
-    def delete_member_page(self):
-        pass
+    def delete_member_page(self, phone):
+        pages: str = self.find(By.CSS_SELECTOR, '.ww_pageNav_info_text').text
+        cur, totle = [int(n) for n in pages.split('/')]
+
+        while cur <= totle:
+            numbers = self.finds(By.CSS_SELECTOR, "#member_list>tr>td:nth-child(5)")
+            nums = [n.get_attribute('title') for n in numbers]
+            msg = ""
+            if phone in nums:
+                self.find(By.XPATH, f'//*[@title="{phone}"]/../td[1]').click()
+                self.find(By.CSS_SELECTOR, '.js_delete').click()
+                self.find(By.XPATH, '//*[@class="qui_btn ww_btn ww_btn_Blue"]').click()
+                msg = "删除成功"
+                code = 1
+                return msg, code
+            self.find(By.CSS_SELECTOR, '.ww_commonImg_PageNavArrowRightNormal').click()
+            cur += 1
+        msg = "客户不存在"
+        code = 0
+        return msg, code
 
     # 通过查找删除成员
-    def delete_member_search(self):
-        pass
+    def delete_member_search(self, phone):
+        self.find(By.CSS_SELECTOR, '#memberSearchInput').send_keys(phone)
+        els = self.finds(By.CSS_SELECTOR, '#search_member_list, .ww_searchResult_title_peopleDepartment')
+        if len(els) > 0:
+            self.find(By.CSS_SELECTOR, '#search_member_list, .ww_searchResult_title_peopleDepartment').click()
+            self.find(By.CSS_SELECTOR, '.js_del_member').click()
+            self.find(By.XPATH, '//*[@class="qui_btn ww_btn ww_btn_Blue"]').click()
+            msg = "删除成功"
+            code = 1
+            return msg, code
+        else:
+            msg = "客户不存在"
+            code = 0
+            return msg, code
