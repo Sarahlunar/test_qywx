@@ -1,3 +1,5 @@
+from appium.webdriver.common.mobileby import MobileBy
+
 from app.pages.address_book.address_book import AddressBook
 from app.pages.base import Base
 from app.pages.message.message import Message
@@ -10,7 +12,7 @@ class Home(Base):
         return Message()
 
     def goto_address_book(self):
-        self._driver.find_element_by_xpath('//*[@resource-id="com.tencent.wework:id/drb" and @text="通讯录"]').click()
+        self.find(MobileBy.XPATH, '//*[@resource-id="com.tencent.wework:id/drb" and @text="通讯录"]').click()
         return AddressBook(self._driver)
 
     def goto_work_bench(self):
