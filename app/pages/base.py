@@ -1,42 +1,41 @@
 from appium.webdriver.common.mobileby import MobileBy
 from appium.webdriver.webdriver import WebDriver
+from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.support.wait import WebDriverWait
+
+from app.pages.wrapper import handle_black
 
 
 class Base:
-    _black_list = [(MobileBy.XPATH, '//*[@text="确定"]'),
-                   (MobileBy.XPATH, '//*[@text="下次再说"]'),
-                   (MobileBy.XPATH, '//*[@text="好的"]')
-    ]
-    _max_try = 3
-    _cur_try = 0
 
     def __init__(self, driver: WebDriver = None):
         self._driver = driver
 
-    def find(self, locator, value:str = None):
-        try:
-            if isinstance(locator, tuple):
-                el = self._driver.find_element(*locator)
-            else:
-                el = self._driver.find_element(locator, value)
+    @handle_black
+    def find(self, locator, value: str = None):
+        if isinstance(locator, tuple):
+            el = self._driver.find_element(*locator)
+        else:
+            el = self._driver.find_element(locator, value)
             # 找到之后, _cur_try归0, 隐士等待时间恢复5
-            self._cur_try = 0
-            self._driver.implicitly_wait(1)
-            return el
-        except Exception as e:
-            # 出现异常,隐士等待时间修改为1
-            self._driver.implicitly_wait(1)
-            # 如果重试次数超出了最大次数, 抛出异常
-            if self._cur_try > self._max_try:
-                raise e
-            self._cur_try += 1
-            # 判断黑名单
-            for b in self._black_list:
-                els = self._driver.find_elements(*b)
-                # 如果存在弹窗, 点击并重新执行find方法
-                if len(els) > 0:
-                    els[0].click()
-                    return self.find(locator, value)
-            raise e
+        return el
+
+    @handle_black
+    def finds(self, locator, value: str = None):
+        els: list
+        if isinstance(locator, tuple):
+            els = self._driver.find_elements(*locator)
+        else:
+            els = self._driver.find_elements(locator, value)
+        # 找到之后, _cur_try归0, 隐士等待时间恢复5
+        return els
+
+    def wait(self, locator, value="click"):
+        if value == "visable":
+            WebDriverWait(self._driver, 5).until(expected_conditions.visibility_of_element_located(locator))
+        elif value == "selected":
+            WebDriverWait(self._driver, 5).until(expected_conditions.element_selection_state_to_be(locator))
+        else:
+            WebDriverWait(self._driver, 5).until(expected_conditions.element_to_be_clickable(locator))
 
 
